@@ -17,7 +17,7 @@ export function base32(input: string): Uint8Array | null {
 
   for (const c of trimmed) {
     const value = alphabetMap.get(c);
-    if (!value) {
+    if (typeof value === "undefined") {
       return null;
     }
 
