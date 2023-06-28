@@ -1,24 +1,14 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { base32 } from "./base32";
+import { totp } from "./totp";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+(async () => {
+  const params = new URLSearchParams(location.search);
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  const key = base32(params.get("key") ?? "");
+  const digit = parseInt(params.get("digit") ?? "6");
+  const step = parseInt(params.get("step") ?? "30");
+
+  const code = await totp(key!, Date.now() / 1000, digit, step);
+  document.querySelector<HTMLDivElement>("#code")!.innerText = code;
+  navigator.clipboard.writeText(code);
+})();
